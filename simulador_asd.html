@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de tamizaje</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:16px;background:#f5f7fb;color:#222}
+  h2{margin:0 0 4px} p.sub{margin:0 0 14px;color:#555;font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+  label{display:flex;flex-direction:column;font-size:13px;gap:4px;background:#fff;padding:8px;border-radius:8px;border:1px solid #dde3ee}
+  select,input[type=range]{width:100%}
+  .resultado{margin-top:16px;background:#fff;border-radius:10px;padding:14px;border:1px solid #dde3ee}
+  .barra{height:22px;background:#e6ebf3;border-radius:11px;overflow:hidden}
+  #relleno{height:100%;width:0;background:#4C9BE8;transition:width .3s,background .3s}
+  #porcentaje{font-size:28px;font-weight:bold;margin:6px 0}
+  .aviso{margin-top:10px;font-size:12px;color:#8a4b00;background:#fff4e0;padding:8px;border-radius:8px}
+</style></head>
+<body>
+<h2>🧠 Simulador de tamizaje de rasgos TEA</h2>
+<p class="sub">Ajusta los datos del niño. El cálculo se hace en tu navegador con los parámetros del modelo de regresión logística.</p>
+<div class="grid">
+  <label>Ítem A1<select id="a1"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A2<select id="a2"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A3<select id="a3"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A4<select id="a4"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A5<select id="a5"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A6<select id="a6"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A7<select id="a7"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A8<select id="a8"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A9<select id="a9"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label><label>Ítem A10<select id="a10"><option value="0">0 – Respuesta típica</option><option value="1">1 – Señal de alerta</option></select></label>
+  <label>Edad: <b id="edadTxt"></b> meses
+    <input type="range" id="age_mons" min="12" max="36" value="24"></label>
+  <label>Sexo<select id="sex_m"><option value="1">Niño</option><option value="0">Niña</option></select></label>
+  <label>Ictericia al nacer<select id="jaundice"><option value="0">No</option><option value="1">Sí</option></select></label>
+  <label>Familiar con TEA<select id="family_mem_with_asd"><option value="0">No</option><option value="1">Sí</option></select></label>
+</div>
+<div class="resultado">
+  <div>Probabilidad estimada de rasgos TEA</div>
+  <div id="porcentaje">–</div>
+  <div class="barra"><div id="relleno"></div></div>
+  <div id="mensaje" style="margin-top:8px;font-size:14px"></div>
+</div>
+<div class="aviso">⚠️ Herramienta educativa de apoyo. No es un diagnóstico: cualquier resultado debe ser valorado por profesionales de la salud.</div>
+<script>
+const M = {"intercepto": -8.694659443518832, "nombres": ["age_mons", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "a10", "sex_m", "jaundice", "family_mem_with_asd"], "coef": [0.05681564067497473, 2.1925844577721048, 2.8153945795974264, 2.0843127114148006, 2.3417543247645183, 2.402647105517208, 2.4665151889941677, 2.5159907305107416, 2.5176780671952677, 2.8014619341783624, 2.262255093140317, 0.17545397729698226, 0.6219327602652248, -0.07127408597482446], "media": {"age_mons": 27.83511269276394}, "escala": {"age_mons": 7.968210911468716}};
+function calcular(){
+  let z = M.intercepto;
+  M.nombres.forEach(function(n, i){
+    let x = parseFloat(document.getElementById(n).value);
+    if (M.media[n] !== undefined){ x = (x - M.media[n]) / M.escala[n]; }
+    z += M.coef[i] * x;
+  });
+  const p = 1 / (1 + Math.exp(-z));
+  const pct = (p * 100).toFixed(1);
+  document.getElementById("edadTxt").textContent = document.getElementById("age_mons").value;
+  document.getElementById("porcentaje").textContent = pct + " %";
+  const barra = document.getElementById("relleno");
+  barra.style.width = pct + "%";
+  barra.style.background = p >= 0.5 ? "#F28C6B" : "#4C9BE8";
+  document.getElementById("mensaje").textContent = p >= 0.5
+    ? "Se sugiere una evaluación profesional."
+    : "Probabilidad baja según el modelo; continuar el seguimiento habitual.";
+}
+document.querySelectorAll("select, input").forEach(function(el){
+  el.addEventListener("input", calcular);
+});
+calcular();
+</script>
+</body></html>
