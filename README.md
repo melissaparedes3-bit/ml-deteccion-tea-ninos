@@ -66,4 +66,4 @@ https://ml-deteccion-tea-ninos-ugei4um3sv7kqmfvppemor.streamlit.app/
 
 ## Video de presentación
 
-Enlace pendiente.
+https://youtu.be/lRhbCFTzooQ
