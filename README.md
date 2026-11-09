@@ -62,7 +62,7 @@ Se compararon tres modelos con validación cruzada y se evaluaron en un conjunto
 
 ## Aplicación desplegada
 
-Enlace pendiente.
+https://ml-deteccion-tea-ninos-ugei4um3sv7kqmfvppemor.streamlit.app/
 
 ## Video de presentación
 
